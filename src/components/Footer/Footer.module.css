@@ -1,0 +1,120 @@
+.footer {
+  background: var(--surface-dark);
+  border-top: 1px solid rgba(91, 181, 245, 0.08);
+  padding: var(--space-16) 0 var(--space-8);
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+}
+
+.footerBrand {
+  max-width: 350px;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  color: var(--white);
+  margin-bottom: var(--space-4);
+}
+
+.footerLogoIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+}
+
+.footerDescription {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted-light);
+  line-height: 1.7;
+}
+
+.footerColumn h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-5);
+}
+
+.footerColumn ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footerColumn a,
+.footerColumn li {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted-light);
+  transition: color var(--transition-fast);
+}
+
+.footerColumn a:hover {
+  color: var(--accent-glow);
+}
+
+.footerBottom {
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(91, 181, 245, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.copyright {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted-light);
+}
+
+.footerSocial {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.socialLink {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(91, 181, 245, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted-light);
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(91, 181, 245, 0.1);
+}
+
+.socialLink:hover {
+  background: rgba(91, 181, 245, 0.2);
+  color: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
