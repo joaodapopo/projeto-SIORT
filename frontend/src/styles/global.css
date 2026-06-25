@@ -1,25 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ========================
-   CSS VARIABLES / TOKENS
-   ======================== */
 :root {
   /* Colors */
-  --primary: #0A2647;
-  --primary-light: #144272;
-  --primary-mid: #1B3A5C;
-  --accent: #2C74B3;
-  --accent-glow: #5BB5F5;
-  --accent-bright: #7EC8E3;
-  --surface: #F0F4F8;
-  --surface-alt: #E2E8F0;
-  --surface-dark: #0D1B2A;
-  --surface-dark-alt: #1B2838;
+  --primary: #10B981;
+  --primary-light: #34D399;
+  --primary-mid: #059669;
+  --accent: #10B981;
+  --accent-glow: rgba(16, 185, 129, 0.1);
+  --accent-bright: #10B981;
+  --surface: #FFFFFF;
+  --surface-alt: #F1F5F9;
+  --surface-dark: #FFFFFF;
+  --surface-dark-alt: #F8FAFC;
   --white: #FFFFFF;
-  --text: #1E293B;
-  --text-light: #F8FAFC;
-  --text-muted: #64748B;
-  --text-muted-light: #94A3B8;
+  --text: #0F172A;
+  --text-light: #1E293B;
+  --text-muted: #475569;
+  --text-muted-light: #64748B;
   --success: #10B981;
   --success-bg: #D1FAE5;
   --error: #EF4444;
@@ -67,8 +64,8 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 20px rgba(91, 181, 245, 0.3);
-  --shadow-glow-strong: 0 0 40px rgba(91, 181, 245, 0.5);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+  --shadow-glow-strong: 0 0 40px rgba(16, 185, 129, 0.35);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -109,7 +106,7 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   color: var(--text);
-  background-color: var(--white);
+  background: linear-gradient(180deg, var(--surface-dark) 0%, var(--surface-dark-alt) 100%) fixed;
   overflow-x: hidden;
 }
 

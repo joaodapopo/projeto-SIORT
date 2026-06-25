@@ -1,20 +1,40 @@
-# React + Vite
+# SIORT — Simpósio de Implantes Ortopédicos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto está dividido em duas partes principais: **frontend** (React + Vite) e **backend** (NestJS + SQLite).
 
-Currently, two official plugins are available:
+## 🚀 Como Executar a Aplicação
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 1. Backend (API & Banco de Dados)
+O backend gerencia os participantes, minicursos, inscrições e certificados em um banco de dados SQLite (`siort.sqlite`).
 
-## React Compiler
+```bash
+# Entre na pasta do backend
+cd backend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Instale as dependências
+npm install
 
-## Expanding the ESLint configuration
+# Inicie o servidor em modo de desenvolvimento
+npm run start:dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-"# projeto-SIORT" 
-"# projeto-SIORT" 
-"# projeto-SIORT" 
-"# projeto-SIORT" 
+* **URL da API**: `http://localhost:3000`
+* **Swagger UI (Documentação e Testes)**: `http://localhost:3000/api`
+
+---
+
+### 2. Frontend (Interface Web)
+O frontend consome as APIs do backend para simular as inscrições em tempo real e emissão de certificados.
+
+```bash
+# Entre na pasta do frontend
+cd frontend
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento do Vite
+npm run dev
+```
+
+* **URL do Frontend**: `http://localhost:5173`

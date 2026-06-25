@@ -13,12 +13,12 @@ function scrollTo(id) {
 }
 
 export default function Registration({
-  participants,
+  participantCount = 0,
   onRegister,
   activeUser,
   onLogin,
 }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', cpf: '' });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
@@ -28,6 +28,29 @@ export default function Registration({
   const [mode, setMode] = useState('register');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginError, setLoginError] = useState('');
+  const formatCPF = (val) => {
+    return val
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+      .substring(0, 14);
+  };
+
+  const formatPhone = (val) => {
+    const clean = val.replace(/\D/g, '');
+    if (clean.length <= 10) {
+      return clean
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{4})(\d)/, '$1-$2')
+        .substring(0, 14);
+    } else {
+      return clean
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+    }
+  };
 
   // Form validations
   const validateForm = useCallback((formData) => {
@@ -49,14 +72,24 @@ export default function Registration({
     } else if (formData.phone.replace(/\D/g, '').length < 10) {
       errs.phone = 'Telefone deve conter DDD e pelo menos 10 dígitos.';
     }
+
+    if (!formData.cpf.trim()) {
+      errs.cpf = 'CPF é obrigatório.';
+    } else if (formData.cpf.replace(/\D/g, '').length !== 11) {
+      errs.cpf = 'CPF deve conter exatamente 11 dígitos.';
+    }
     return errs;
   }, []);
 
   const handleChange = (field) => (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    if (field === 'cpf') {
+      value = formatCPF(value);
+    } else if (field === 'phone') {
+      value = formatPhone(value);
+    }
     const newForm = { ...form, [field]: value };
     setForm(newForm);
-
     if (touched[field]) {
       const fieldErrors = validateForm(newForm);
       setErrors((prev) => {
@@ -81,40 +114,41 @@ export default function Registration({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setTouched({ name: true, email: true, phone: true });
+    setTouched({ name: true, email: true, phone: true, cpf: true });
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) return;
 
     setLoading(true);
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-
-    // Register
-    onRegister(form);
-    setLoading(false);
-    setSuccess(true);
+    try {
+      await onRegister(form);
+      setSuccess(true);
+    } catch (err) {
+      setErrors({ email: err.message || 'Erro ao realizar inscrição.' });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
-    const emailStr = loginEmail.trim().toLowerCase();
-    const found = participants.find((p) => p.email.toLowerCase() === emailStr);
-    
-    if (found) {
-      onLogin(found);
+    setLoading(true);
+    try {
+      await onLogin(loginEmail.trim().toLowerCase());
       // Scroll directly to minicourses section
       setTimeout(() => scrollTo('minicursos'), 300);
-    } else {
-      setLoginError('E-mail não cadastrado no evento. Por favor, verifique a grafia ou inscreva-se.');
+    } catch (err) {
+      setLoginError(err.message || 'E-mail não cadastrado no evento. Por favor, verifique a grafia ou inscreva-se.');
+    } finally {
+      setLoading(false);
     }
   };
 
   // Live registration counter calculation (base mock number 142 + actual state count)
   const counterBase = 142;
-  const totalSubscribers = counterBase + participants.length;
+  const totalSubscribers = counterBase + participantCount;
 
   return (
     <section className={styles.section} id="inscricao">
@@ -189,12 +223,13 @@ export default function Registration({
                   <p><strong>Nome:</strong> {form.name}</p>
                   <p><strong>E-mail:</strong> {form.email}</p>
                   <p><strong>Telefone:</strong> {form.phone}</p>
+                  <p><strong>CPF:</strong> {form.cpf}</p>
                 </div>
                 <div className={styles.successActions}>
                   <button
                     onClick={() => {
                       setSuccess(false);
-                      setForm({ name: '', email: '', phone: '' });
+                      setForm({ name: '', email: '', phone: '', cpf: '' });
                       setTouched({});
                       setTimeout(() => scrollTo('minicursos'), 300);
                     }}
@@ -205,7 +240,7 @@ export default function Registration({
                   <button
                     onClick={() => {
                       setSuccess(false);
-                      setForm({ name: '', email: '', phone: '' });
+                      setForm({ name: '', email: '', phone: '', cpf: '' });
                       setTouched({});
                       setMode('register');
                     }}
@@ -309,6 +344,31 @@ export default function Registration({
                       {errors.phone && touched.phone && (
                         <span className={styles.errorMsg}>
                           <AlertCircle size={12} /> {errors.phone}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* CPF */}
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="reg-cpf" className={styles.label}>
+                        CPF <span className={styles.required}>*</span>
+                      </label>
+                      <div className={styles.inputWrapper}>
+                        <User size={18} className={styles.inputIcon} />
+                        <input
+                          id="reg-cpf"
+                          type="text"
+                          className={`${styles.input} ${errors.cpf && touched.cpf ? styles.inputError : ''}`}
+                          placeholder="000.000.000-00"
+                          value={form.cpf}
+                          onChange={handleChange('cpf')}
+                          onBlur={handleBlur('cpf')}
+                          disabled={loading}
+                        />
+                      </div>
+                      {errors.cpf && touched.cpf && (
+                        <span className={styles.errorMsg}>
+                          <AlertCircle size={12} /> {errors.cpf}
                         </span>
                       )}
                     </div>

@@ -2,38 +2,28 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Award, AlertCircle, FileText, Download, Calendar, CheckCircle } from 'lucide-react';
 import styles from './Certificates.module.css';
+import { fetchCertificateData } from '../../services/api';
 
-const courses = [
-  { id: 1, title: 'Minicurso 1: Introdução aos Implantes' },
-  { id: 2, title: 'Minicurso 2: Materiais Biocompatíveis' },
-];
-
-export default function Certificates({
-  participants,
-  courseEnrollments,
-}) {
+export default function Certificates() {
   const [emailInput, setEmailInput] = useState('');
   const [searchResult, setSearchResult] = useState(null); // 'not_found' | participant object
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     setSearched(true);
-    const emailStr = emailInput.trim().toLowerCase();
-    const found = participants.find((p) => p.email.toLowerCase() === emailStr);
-
-    if (found) {
-      // Find course enrollments for this user
-      const userCourses = courseEnrollments
-        .filter((en) => en.usuarioEmail.toLowerCase() === emailStr)
-        .map((en) => courses.find((c) => c.id === en.cursoId))
-        .filter(Boolean);
-
-      setSearchResult({
-        ...found,
-        courses: userCourses,
-      });
-    } else {
+    try {
+      const data = await fetchCertificateData(emailInput.trim().toLowerCase());
+      if (data && data.participant) {
+        setSearchResult({
+          name: data.participant.name,
+          email: data.participant.email,
+          courses: data.courses || [],
+        });
+      } else {
+        setSearchResult('not_found');
+      }
+    } catch (err) {
       setSearchResult('not_found');
     }
   };

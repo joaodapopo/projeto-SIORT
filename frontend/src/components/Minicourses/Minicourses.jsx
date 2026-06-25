@@ -3,55 +3,32 @@ import { motion } from 'framer-motion';
 import { BookOpen, UserCheck, ShieldAlert, Key, ArrowRight, Check, Clock, Award } from 'lucide-react';
 import styles from './Minicourses.module.css';
 
-const courses = [
-  {
-    id: 1,
-    title: 'Minicurso 1: Introdução aos Implantes',
-    instructor: 'Dr. Roberto Costa (USP)',
-    description: 'Introdução aos fundamentos da bioengenharia ortopédica, abordando anatomia articular, cinemática das articulações e critérios clínicos para indicação de implantes.',
-    duration: '4 horas',
-    schedule: '15/08 às 14:00',
-    tags: ['Bioengenharia', 'Clínica'],
-  },
-  {
-    id: 2,
-    title: 'Minicurso 2: Materiais Biocompatíveis',
-    instructor: 'Dra. Eliana Silva (UNICAMP)',
-    description: 'Estudo aprofundado dos materiais usados em implantes (ligas de titânio, cerâmicas avançadas e polímeros ultra-resistentes) e sua interação celular e óssea (osseointegração).',
-    duration: '4 horas',
-    schedule: '16/08 às 14:00',
-    tags: ['Metalurgia', 'Biocompatibilidade'],
-  },
-];
-
 export default function Minicourses({
   activeUser,
-  participants,
-  courseEnrollments,
+  courses = [],
+  userEnrollments = [],
   onEnroll,
   onLogin,
 }) {
   const [emailInput, setEmailInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleVerifyEmail = (e) => {
+  const handleVerifyEmail = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    const emailStr = emailInput.trim().toLowerCase();
-    const found = participants.find((p) => p.email.toLowerCase() === emailStr);
-    
-    if (found) {
-      onLogin(found);
-    } else {
-      setErrorMsg('E-mail não cadastrado. Inscreva-se no evento principal primeiro.');
+    setLoading(true);
+    try {
+      await onLogin(emailInput.trim().toLowerCase());
+    } catch (err) {
+      setErrorMsg(err.message || 'E-mail não cadastrado. Inscreva-se no evento principal primeiro.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const isEnrolled = (courseId) => {
-    if (!activeUser) return false;
-    return courseEnrollments.some(
-      (en) => en.usuarioEmail.toLowerCase() === activeUser.email.toLowerCase() && en.cursoId === courseId
-    );
+    return userEnrollments.includes(courseId);
   };
 
   return (
@@ -159,14 +136,13 @@ export default function Minicourses({
                   <div className={styles.cardHeader}>
                     <div className={styles.courseBadge}>Minicurso</div>
                     <div className={styles.tags}>
-                      {course.tags.map((tag) => (
+                      {(Array.isArray(course.parsedTags) ? course.parsedTags : (Array.isArray(course.tags) ? course.tags : JSON.parse(course.tags || '[]'))).map((tag) => (
                         <span key={tag} className={styles.tag}>
                           {tag}
                         </span>
                       ))}
                     </div>
                   </div>
-
                   <h3 className={styles.courseTitle}>{course.title}</h3>
                   <span className={styles.instructor}>{course.instructor}</span>
                   <p className={styles.courseDesc}>{course.description}</p>

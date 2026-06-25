@@ -1,0 +1,118 @@
+const API_BASE = 'http://localhost:3000';
+
+export async function fetchCourses() {
+  const res = await fetch(`${API_BASE}/courses`);
+  if (!res.ok) throw new Error('Erro ao carregar minicursos');
+  return res.json();
+}
+
+export async function getParticipantCount() {
+  const res = await fetch(`${API_BASE}/participants/count`);
+  if (!res.ok) throw new Error('Erro ao obter contagem de participantes');
+  const data = await res.json();
+  return data.count;
+}
+
+export async function registerParticipant(name, email, phone, cpf) {
+  const res = await fetch(`${API_BASE}/participants`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, phone, cpf }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao realizar inscrição');
+  }
+  return res.json();
+}
+
+export async function loginParticipant(email) {
+  const res = await fetch(`${API_BASE}/participants/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'E-mail não cadastrado no evento.');
+  }
+  return res.json();
+}
+
+export async function toggleEnrollment(email, courseId) {
+  const res = await fetch(`${API_BASE}/enrollments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, courseId }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao alterar inscrição no minicurso');
+  }
+  return res.json(); // Returns { status: 'enrolled' | 'unenrolled', enrollment?: ... }
+}
+
+export async function fetchEnrollments(email) {
+  const res = await fetch(`${API_BASE}/enrollments?email=${encodeURIComponent(email)}`);
+  if (!res.ok) throw new Error('Erro ao buscar inscrições');
+  return res.json();
+}
+
+export async function fetchCertificateData(email) {
+  const res = await fetch(`${API_BASE}/certificates?email=${encodeURIComponent(email)}`);
+  if (!res.ok) {
+    if (res.status === 404) return null;
+    throw new Error('Erro ao consultar certificado');
+  }
+  return res.json();
+}
+
+// ─── ADMIN COURSE CRUD ───────────────────────────────────────────────
+
+export async function createCourse(title, instructor, description, duration, schedule, tags = []) {
+  const res = await fetch(`${API_BASE}/courses`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, instructor, description, duration, schedule, tags }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao criar minicurso');
+  }
+  return res.json();
+}
+
+export async function updateCourse(id, courseData) {
+  const res = await fetch(`${API_BASE}/courses/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(courseData),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao atualizar minicurso');
+  }
+  return res.json();
+}
+
+export async function deleteCourse(id) {
+  const res = await fetch(`${API_BASE}/courses/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao excluir minicurso');
+  }
+  return res.json();
+}
+
+export async function fetchParticipants() {
+  const res = await fetch(`${API_BASE}/participants`);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Erro ao obter lista de participantes');
+  }
+  return res.json();
+}
+
+
